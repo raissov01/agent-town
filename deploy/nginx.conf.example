@@ -1,0 +1,31 @@
+# /etc/nginx/conf.d/agent-town.conf — town.example.com → relay (127.0.0.1:3020)
+# Кейін: certbot --nginx -d town.example.com --redirect
+server {
+    listen 80;
+    server_name town.example.com;
+    client_max_body_size 4m;
+
+    location /api/stream {            # SSE: буферлеу өшірулі
+        proxy_pass http://127.0.0.1:3020;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Connection "";
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 1h;
+    }
+    location /bridge/ {               # bridge long-poll (25 с)
+        proxy_pass http://127.0.0.1:3020;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_read_timeout 60s;
+    }
+    location / {
+        proxy_pass http://127.0.0.1:3020;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

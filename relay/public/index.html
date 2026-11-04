@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d1f24">
+<title>Agent Town</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <form id="loginForm" class="card">
+    <h1>Agent Town</h1>
+    <p class="muted">Агенттер қалашығы. Кіру үшін құпия сөз керек.</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Құпия сөз" required>
+    <button type="submit">Кіру</button>
+    <p id="loginErr" class="err"></p>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header>
+    <div class="brand">Agent Town</div>
+    <div class="status"><span id="dot" class="sdot"></span><span id="statusText">қосылуда…</span></div>
+    <div class="stats" id="stats"></div>
+    <div class="actions">
+      <button id="newBtn" class="primary">+ Тапсырма</button>
+      <button id="logoutBtn" class="ghost">Шығу</button>
+    </div>
+  </header>
+  <main>
+    <section class="world tab-pane" data-pane="town">
+      <div id="offlineBanner" class="banner" hidden></div>
+      <div class="map-wrap" id="mapWrap"><canvas id="c" width="1536" height="864"></canvas></div>
+      <div class="map-hint">Картаны саусақпен жылжыт · кейіпкерді бас</div>
+      <details class="legend-box" id="legendBox"><summary>Белгілер нені білдіреді?</summary>
+      <div class="legend">
+        <span><i style="background:#c9a77c"></i><b>Кеңсе</b> — бір жоба. Үстелде отырған агент жұмыс істеп жатыр, монитор — оның нақты коды</span>
+        <span><i style="background:#d9b48f"></i><b>Кафе</b> — жауап беріп, сенің келесі хабарыңды күтіп отыр</span>
+        <span><i style="background:#b8a690"></i><b>Мәжіліс</b> — агент тапсырма берген көмекшілер (сабагенттер)</span>
+        <span><i style="background:#7f8fa6"></i><b>Үй</b> — 20 минуттан бері белсенді емес, не энергиясы бітіп ұйықтап жатыр</span>
+        <span><i style="background:#ffffff"></i><b>Бұлт</b> — claude.ai/code-тағы бұлттық сессиялар</span>
+        <span><i style="background:#5fbf6a"></i><b>Жасыл жолақ</b> — энергия: бүгінгі токен бюджетінің қалғаны</span>
+        <span class="muted">Агентті не карточканы бас — не істеп жатқаны ашылады, сол жерден оған хабар жіберуге болады.</span>
+      </div></details>
+      <div class="tab-pane runs-pane" data-pane="runs"><div class="pane-title">Сайттан берілген тапсырмалар</div><div id="runs" class="runs"></div><div id="runsEmpty" class="empty">Әзірге сайттан тапсырма берілмеген. Төмендегі «Жаңа тапсырма» батырмасын бас.</div></div>
+    </section>
+    <aside id="side" class="tab-pane" data-pane="agents">
+      <div id="list"></div>
+    </aside>
+  </main>
+  <nav class="tabbar" id="tabbar">
+    <button data-tab="town" class="on">Қала</button>
+    <button data-tab="agents">Агенттер <span id="tabAgents" class="cnt"></span></button>
+    <button data-tab="runs">Тапсырмалар <span id="tabRuns" class="cnt"></span></button>
+  </nav>
+  <button id="fab" class="fab primary">+ Жаңа тапсырма</button>
+</div>
+
+<div id="drawer" class="drawer" hidden>
+  <div class="drawer-head">
+    <div><div id="dTitle" class="d-title"></div><div id="dSub" class="muted"></div></div>
+    <button id="dClose" class="ghost" aria-label="Жабу">Жабу</button>
+  </div>
+  <div id="dBody" class="drawer-body"></div>
+  <form id="msgForm" class="msg">
+    <textarea id="msgText" rows="2" placeholder="Агентке хабар… (ноутбукта осы сессияны жалғастырады)"></textarea>
+    <div class="row">
+      <button type="submit" class="primary">Жіберу</button>
+      <button type="button" id="handoffBtn" hidden>Бұлтта жалғастыру</button>
+      <button type="button" id="stopBtn" class="danger" hidden>Тоқтату</button>
+    </div>
+    <p id="handoffHint" class="muted" hidden></p>
+  </form>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <form id="newForm" class="card wide">
+    <h2>Жаңа тапсырма</h2>
+    <label>Жоба папкасы
+      <select id="nCwd"></select>
+    </label>
+    <div class="seg" id="nEngine">
+      <label><input type="radio" name="eng" value="claude" checked><span>Claude (ноутбук)</span></label>
+      <label><input type="radio" name="eng" value="codex"><span>Codex (ноутбук)</span></label>
+      <label><input type="radio" name="eng" value="cloud"><span>Claude бұлты</span></label>
+    </div>
+    <p class="muted" id="engHint"></p>
+    <textarea id="nText" rows="5" placeholder="Не істеу керек?" required></textarea>
+    <div class="row">
+      <button type="submit" class="primary">Бастау</button>
+      <button type="button" id="nCancel" class="ghost">Болдырмау</button>
+    </div>
+  </form>
+</div>
+
+<div id="toasts" class="toasts"></div>
+<script src="/town.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# ~/.config/systemd/user/agent-town-bridge.service
+#   systemctl --user daemon-reload && systemctl --user enable --now agent-town-bridge
+[Unit]
+Description=Agent Town bridge
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/agent-town/bridge
+# node, claude және codex тұрған папкалар PATH-та болуы керек
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env node %h/agent-town/bridge/bridge.js
+Restart=always
+RestartSec=5
+# іске қосылған тапсырмалар bridge қайта іске қосылғанда өлмесін
+KillMode=process
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.deploy.env
+bridge/cloud-sessions.json
+bridge/handoffs.json
+relay/data/
+data/
+__pycache__/
+*.pyc
